@@ -7,11 +7,14 @@ import django
 django.setup()
 import csv
 
-from encounters.models import NPC
-
+from pages.models import NPC
+number = 0
 with open('beastiary.csv', newline='') as csvfile:
+
     r = csv.DictReader(csvfile)
     for i in r:
+        number += 1
+        print(number)
         npc = NPC()
         npc.name = i['Name']
         npc.cr = float(i['CR'])

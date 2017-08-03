@@ -1,0 +1,140 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Encounter Builder</title>
+    <link rel="stylesheet" href="{% static 'pages/js/jquery-ui.min.css' %}">
+    <link rel="stylesheet" href="{% static 'pages/css/encounter.css' %}">
+</head>
+<body>
+<h1>Encounter Builder</h1>
+
+<label for="nameSearch">Name</label>
+<input class='search' type="search" name="name" id="nameSearch">
+
+<label for="crLow">Challenge rating</label>
+<input class='search' type="search" name="crLow" id="crLow" value="0">
+<input class='search' type="search" name="crHigh" id="crHigh" value="20">
+
+<label for="environment">Environment</label>
+<input class='search' type="search" name="environment" id="environment">
+
+<label for="type">Type</label>
+<input class='search' type="search" name="type" id="type">
+
+
+
+<div id="searchResults">
+    <ul id="npcList"></ul>
+</div>
+
+<div id="list">
+    <h3>{{ enc.name }}</h3>
+    <p>{{ enc.description }}</p><span id="pk" style="visibility: hidden ">{{ enc.id }}</span><br>
+    {% for mon in enc.monsters.all %}
+        {{ mon.npc.name }} x{{ mon.number }} <br>
+    {% endfor %}
+</div>
+
+<button id="finished" onclick="parent.location='../../'">Done</button>
+
+
+
+<script src="{% static 'pages/js/external/jquery/jquery.js' %}"></script>
+<script src="{% static 'pages/js/jquery-ui.min.js' %}"></script>
+<script src="{% static 'pages/js/encounterBuilder.js' %}"></script>
+<script type="application/javascript">
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    var csrftoken = getCookie('csrftoken');
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+
+    $('.search ').keyup(function (e) {
+        e.preventDefault();
+        var searchResults = $('#searchResults');
+        var name = $('#nameSearch').val();
+        var crLow = $('#crLow').val();
+        var crHigh = $('#crHigh').val();
+        var environment = $('#environment').val();
+        var type = $('#type').val();
+        $.ajax({
+            url: {% url 'search_api' %},
+            type: 'POST',
+            data: {
+                name: name,
+                crLow: crLow,
+                crHigh: crHigh,
+                environment: environment,
+                type: type
+            },
+            success: function (data) {
+                console.log(data.data);
+                $.each(data.data, function (i, o) {
+                    $('#npcList').append(
+                        "<li class='npcList'>" +
+                            "<div class='name'>" + o.name + "</div>" +
+                            "<div class='cr'> CR: " + o.cr + "</div>" +
+                            "<label for='number'>number to add</label>" +
+                            "<input type='number' name='number' id='numbToAdd" + o.id + "'>" +
+                            "<button class='addButton' onclick='addMonster("+ o.id + ")'>add</button>" +
+                            "<span id='npcPk' style='display: none'>{{ o.id }}</span>" +
+                        "</li>"
+                    );
+
+                })
+
+
+            }
+        })
+    });
+
+    function addMonster(pk) {
+        $.ajax({
+            url: {% url 'add_monster_api' %},
+            type: 'POST',
+            data: {
+                pk: pk,
+                enc: $('#pk').html(),
+                numb: $('#numbToAdd' + pk).val()
+            },
+            success: function (data) {
+                console.log(data.message)
+            }
+        })
+
+    }
+    console.log($('#pk').html())
+
+    function addEncounter(enc) {
+
+    }
+</script>
+</body>

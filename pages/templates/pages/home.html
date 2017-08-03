@@ -1,0 +1,220 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="{% static 'pages/js/jquery-ui.min.css' %}">
+    <link rel="stylesheet" href="{% static 'pages/css/home.css' %}">
+</head>
+<body>
+<h1>D20 Encounters</h1>
+<h2>Pathfinder Edition</h2>
+<div id="mainView" class="widget">
+    <div>Current Session: <span id="currentSession">none</span></div>
+    <button id="newSession">New Session</button>
+    <button id="loadSessionButton">Load Session</button>
+        <div id="loadSession">
+            <div class="modal-content" id="load">
+                {% for s in session %}
+                    {{ s.session_date }}
+                    <button id="setSession" onclick="setSession({{ s.id }})">add</button><br>
+                {% endfor %}
+            </div>
+        </div>
+    <div id="add">
+        <button id="addPlayerButton" >Add Player</button>
+            <div id="addPlayer">
+                <div class="modal-content">
+                    {% for c in character %}
+                        {{ c.name }}
+                        <button id="addChar" onclick="addCharacter({{ c.id }})">add</button><br>
+                    {% endfor %}
+                </div>
+            </div>
+
+        <button id="addEncounterButton">Add Encounter</button>
+            <div id="addEncounter">
+                <div class="modal-content">
+                    {% for e in enc %}
+                        {{ e.name }}
+                        <button id="addEnc" onclick="addEncounter({{ e.id }})">add</button><br>
+                    {% endfor %}
+                </div>
+            </div>
+
+
+
+    </div>
+    <div id="create">
+        <button id="createPlayerButton">Create PC</button>
+        <div id="createPlayer">
+             <div class="modal-content">
+                <form action="{% url 'create_player' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <label for="chracterName">Name</label>
+                    <input type="text" name="chracterName" id="chracterName">
+                    <label for="initiativeBonus">Initiative Bonus</label>
+                    <input type="number" name="initiativeBonus" id="initiativeBonus">
+                    <label for="ac">AC</label>
+                    <input type="number" name="ac" id="ac">
+
+                    <input type="submit" value="Add PC"/>
+                </form>
+            </div>
+        </div>
+
+        <button id="createEncounterButton">Create Encounter</button>
+        <div id="dialog" title="Create Encounter">
+            <div class="modal-content">
+                <form action="{% url 'create_encounter' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <label for="encounterName">Name</label>
+                    <input type="text" name="encounterName" id="encounterName">
+                    <label for="description">Description</label>
+                    <input type="text" name="description" id="description">
+
+                    <input type="submit" value="Add NPCs"/>
+                </form>
+            </div>
+        </div>
+
+    </div>
+    <div >
+        <ul id="charList"></ul>
+
+    </div>
+
+    <button id="startCombat">Start Combat</button>
+
+</div>
+
+
+<script src="{% static 'pages/js/external/jquery/jquery.js' %}"></script>
+<script src="{% static 'pages/js/jquery-ui.min.js' %}"></script>
+<script src="{% static 'pages/js/home.js' %}"></script>
+<script>
+        function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    var csrftoken = getCookie('csrftoken');
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+    $('#newSession').click(function () {
+        var date = new Date();
+        $.ajax({
+            url: {% url 'create_session' %},
+            type: 'POST',
+            data: {
+                date: date
+            },
+            success: function (data) {
+                $('#currentSession').html(data.id)
+                $('#charList').html('')
+                $('#load').append("<button id=\"setSession\" onclick=\"setSession({{ s.id }})\">add</button><br>")
+                $.each(data, function (i, o) {
+
+                   $.each(o.players, function (index, ob) {
+                       $('#charList').append("<li class='charListItem'>" + ob.name + "</li>")
+
+                   })
+                    $.each(o.encounter, function (index, ob) {
+                        $('#charList').append("<li class='charListItem'>" + ob.name + "</li>")
+
+                    })
+                })
+            }
+        })
+    });
+
+    function addCharacter(player){
+        var pk =  player;
+        $.ajax({
+            url: {% url 'player_to_session' %},
+            type: 'POST',
+            data:{
+                pk: pk,
+                sessionId: $('#currentSession').html()
+
+            },
+             success: function (data){
+                console.log(data)
+            $('#charList').append("<li class='charListItem'>" + data.data.name + "</li>")
+            }
+        })
+
+
+        };
+
+    function addEncounter(encounter){
+        var pk =  encounter;
+        $.ajax({
+            url: {% url 'encounter_to_session' %},
+            type: 'POST',
+            data:{
+                pk: pk,
+                sessionId: $('#currentSession').html()
+            },
+             success: function (data){
+
+            $('#charList').append("<li class='charListItem'>" + data.data.name + "</li>")
+        }
+        })
+        };
+
+    function setSession(session) {
+
+        $.ajax({
+            url: {% url 'set_session' %},
+            type: 'POST',
+            data:{
+                pk: session
+            },
+            success: function (data) {
+
+                console.log(data)
+
+                $('#currentSession').html(data.data.id)
+                $('#charList').html('')
+                $.each(data, function (i, o) {
+
+                   $.each(o.players, function (index, ob) {
+                       $('#charList').append("<li class='charListItem'>" + ob.name + "</li>")
+
+                   })
+                    $.each(o.encounter, function (index, ob) {
+                        $('#charList').append("<li class='charListItem'>" + ob.name + "</li>")
+
+                    })
+                })
+            }
+        })
+    }
+
+
+
+</script>

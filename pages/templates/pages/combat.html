@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Combat</title>
+    <link rel="stylesheet" href="{% static 'pages/js/jquery-ui.min.css' %}">
+    <link rel="stylesheet" href="{% static 'pages/css/combat.css' %}">
+</head>
+<body>
+<div id="currentTurn"></div>
+<div><ol id="initiativeOrder"></ol></div>
+</body>
+</html>
+<script src="{% static 'pages/js/external/jquery/jquery.js' %}"></script>
+<script src="{% static 'pages/js/jquery-ui.min.js' %}"></script>
+<script src="{% static 'pages/js/external/cll/index.js' %}"></script>
+<script>
+
+    var list = []
+    var initiative_list = new CircularList(list);
+    function startInitiative(pk) {
+        $.ajax({
+            url: {% initiative_tracker %},
+            type: 'POST',
+            data: {
+                pk: pk,
+
+            },
+            success: function (data){
+                $.each(data, function (i, o) {
+
+                    $.each(o.players, function (index, ob) {
+                        initiative_list.add(ob)
+
+                    })
+                    $.each(o.npcs, function (index, ob) {
+                        initiative_list.add(ob)
+
+                    })
+                })
+
+            }
+        })
+
+    }
+    startInitiative(session)
+</script>

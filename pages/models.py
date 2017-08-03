@@ -42,3 +42,40 @@ class NPC(models.Model):
     treasure = models.CharField(max_length=256, null=True, blank=True)
     speed = models.CharField(max_length=256, null=True, blank=True)
     source = models.CharField(max_length=256, null=True, blank=True)
+
+    def __str__(self):
+        return self.name + ' cr: ' + str(self.cr)
+
+
+class Character(models.Model):
+    name = models.CharField(max_length=256)
+    initiativeBonus = models.IntegerField()
+    ac = models.IntegerField()
+
+    def __str__(self):
+        return self.name
+
+
+
+class Encouter(models.Model):
+    name = models.CharField(max_length=256)
+    description = models.CharField(max_length=1024, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+class Monster(models.Model):
+    npc = models.ForeignKey('NPC')
+    number = models.IntegerField(null=True)
+    encounter = models.ForeignKey('Encouter', related_name='monsters')
+
+class Session(models.Model):
+    session_date = models.DateField()
+    encounter = models.ManyToManyField('Encouter', blank=True)
+    players = models.ManyToManyField('Character', blank=True)
+
+    def __str__(self):
+        return str(self.session_date)
+
+
+
