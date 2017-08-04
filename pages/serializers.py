@@ -1,4 +1,4 @@
-from .models import NPC, Character, Encouter, Session, Monster
+from .models import NPC, Character, Encounter, Session, Monster, PC
 from rest_framework import serializers
 
 
@@ -10,36 +10,32 @@ class NPCSerializer(serializers.ModelSerializer):
 
 class CharacterSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Character
+        model = PC
         fields = '__all__'
 
 
+class MonsterSerializer(serializers.ModelSerializer):
+    npc = NPCSerializer(many=True)
+    class Meta:
+        model = Monster
+        fields = ('NPC', 'number')
 
 
 class EncounterSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Encouter
+        model = Encounter
         fields = '__all__'
 
 
 class SessionSerializer(serializers.ModelSerializer):
-    encounter = EncounterSerializer(many=True)
-    players = CharacterSerializer(many=True)
+    encounter = EncounterSerializer()
+    pcs = CharacterSerializer(many=True)
+
     class Meta:
         model = Session
-        fields = ('id', 'session_date', 'encounter', 'players')
+        fields = ('id', 'session_date', 'encounter', 'pcs')
 
-class MonsterSerializer(serializers.ModelSerializer):
-    encounter = EncounterSerializer(source='encounter_set')
-     class Meta:
-        model = Monster
-        fields = '__all__'
 
-class InitiativeSerializer(serializers.ModelSerializer):
-    players = CharacterSerializer(many=True)
-    npcs = NPCSerializer(many=True)
-    monster = MonsterSerializer(many=True)
-    class Meta:
-        model = Session
-        fields = ('id', 'session_date', 'players', 'npcs')
+
+

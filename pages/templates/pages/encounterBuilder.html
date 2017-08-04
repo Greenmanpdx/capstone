@@ -24,7 +24,6 @@
 <input class='search' type="search" name="type" id="type">
 
 
-
 <div id="searchResults">
     <ul id="npcList"></ul>
 </div>
@@ -97,6 +96,7 @@
             },
             success: function (data) {
                 console.log(data.data);
+                $('#npcList').html('');
                 $.each(data.data, function (i, o) {
                     $('#npcList').append(
                         "<li class='npcList'>" +
@@ -133,8 +133,6 @@
     }
     console.log($('#pk').html())
 
-    function addEncounter(enc) {
 
-    }
 </script>
 </body>

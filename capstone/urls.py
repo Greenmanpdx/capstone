@@ -30,7 +30,10 @@ urlpatterns = [
     url(r'^player_to_session/', page_views.player_to_session, name='player_to_session'),
     url(r'^encounter_to_session/', page_views.encounter_to_session, name='encounter_to_session'),
     url(r'^set_session/', page_views.set_session, name='set_session'),
-    url(r'^combat/(?P<pk>[\w]+)', page_views.combat, name='combat'),
-    url(r'^initiative_tracker', page_views.initiative_tracker, name='initiative_tracker')
+    url(r'^combat/(?P<pk>[\w]+)/', page_views.combat, name='combat'),
+    url(r'^initiative_tracker/', page_views.initiative_tracker, name='initiative_tracker'),
+    url(r'^set_initiatve_window/', page_views.set_initiatve_window, name='set_initiatve_window'),
+    url(r'^start_combat/', page_views.start_combat, name='start_combat'),
+    url(r'^set_initiative/', page_views.set_initiative, name='set_initiative'),
 
 ]

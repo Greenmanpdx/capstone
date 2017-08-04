@@ -89,6 +89,23 @@ $(function () {
 });
 
 $(function () {
+    $("#setInitiative").dialog({
+        autoOpen: false,
+        show: {
+            effect: "blind",
+            duration: 1000
+        },
+        hide: {
+            effect: "explode",
+            duration: 1000
+        }
+    });
+
+    $("#rollInitiativeButton").on("click", function () {
+        $("#setInitiative").dialog("open");
+    });
+});
+$(function () {
     $(".widget input[type=submit], .widget a, .widget button").button();
     $("button, input, a").click(function (event) {
         //event.preventDefault();

@@ -41,7 +41,7 @@ with open('beastiary.csv', newline='') as csvfile:
         npc.range = i['Ranged']
         npc.space = i['Space']
         npc.reach = i['Reach']
-        npc.str = 0 if i['Str'] == '-' else int(i['Str'])
+        npc.str = 0 if i['Str'] == '-' else int(i['Str'][:3])
         npc.dex = 0 if i['Dex'] == '-' else int(i['Dex'])
         npc.dex = 0 if i['Con'] == '-' else int(i['Con'])
         npc.int = 0 if i['Int'] == '-' else int(i['Int'])
