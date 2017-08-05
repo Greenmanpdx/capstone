@@ -3,7 +3,7 @@ from . tracker import Tracker
 from itertools import chain
 from operator import attrgetter
 from picklefield.fields import PickledObjectField
-
+import pickle
 # Create your models here.
 
 
@@ -16,6 +16,24 @@ class Character(models.Model):
 
     def __str__(self):
         return self.name
+
+    def __lt__(self, other):
+        if self.initiative == other.initiative:
+            return self.initiativeBonus > other.initiativeBonus
+        else:
+            return self.initiative > other.initiative
+
+    def __gt__(self, other):
+        if self.initiative == other.initiative:
+            return self.initiativeBonus < other.initiativeBonus
+        else:
+            return self.initiative < other.initiative
+
+    def __eq__(self, other):
+        if self.initiative == other.initiative:
+            return self.initiativeBonus == other.initiativeBonus
+        else:
+            return self.initiative == other.initiative
 
     class Meta:
         abstract = True
@@ -88,6 +106,9 @@ class Session(models.Model):
     session_date = models.DateField()
     encounter = models.ForeignKey('Encounter', blank=True, null=True)
     pcs = models.ManyToManyField('PC', blank=True)
+    tracker = PickledObjectField(null=True)
+    delay = PickledObjectField(null=True)
+
 
     def __str__(self):
         return str(self.session_date)
@@ -96,11 +117,11 @@ class Session(models.Model):
         list = []
         for monster in monsters:
             for i in range(0, monster.number):
-                list.append(monster)
+                list.append(monster.npc)
         return list
 
     def first_pickle_list(self):
-        monster_list = [monster for monster in self.encounter.all[0].monsters.all()]
+        monster_list = [monster for monster in self.encounter.monsters.all()]
         npc_list = self.extract_npcs(monster_list)
         players_list = [p for p in self.pcs.all()]
         tracker = Tracker()
@@ -110,6 +131,6 @@ class Session(models.Model):
             reverse=True)
         for x in result_list:
             tracker.add_player(x)
-        self.tracker = tracker
+        self.tracker = pickle.dumps(tracker)
 
 

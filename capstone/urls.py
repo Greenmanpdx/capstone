@@ -35,5 +35,9 @@ urlpatterns = [
     url(r'^set_initiatve_window/', page_views.set_initiatve_window, name='set_initiatve_window'),
     url(r'^start_combat/', page_views.start_combat, name='start_combat'),
     url(r'^set_initiative/', page_views.set_initiative, name='set_initiative'),
+    url(r'^next_turn/', page_views.next_turn, name='next_turn'),
+    url(r'^previous_turn/', page_views.previous_turn, name='previous_turn'),
+    url(r'^delay_turn/', page_views.delay_turn, name='delay_turn'),
+    url(r'^resume_menu/', page_views.resume_menu, name='resume_menu'),
 
 ]

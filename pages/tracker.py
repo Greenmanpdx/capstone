@@ -1,6 +1,6 @@
 
 import csv
-
+import pickle
 
 class Circular_list(list):
     def __getitem__(self, item):
@@ -37,6 +37,9 @@ class Tracker:
         self.turn_tracker.insert(turn_index % len(self.turn_tracker), self.delayed_dict[delay_index])
         del self.delayed_dict[delay_index]
 
+    def dump(self):
+        data = pickle.dumps(self)
+        return data
 
 
 

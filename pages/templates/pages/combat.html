@@ -8,20 +8,171 @@
     <link rel="stylesheet" href="{% static 'pages/css/combat.css' %}">
 </head>
 <body>
+<div><span id="currentSession" style="visibility: hidden">{{ session.id }}</span></div>
+<h3>Current Turn</h3>
 <div id="currentTurn"></div>
-<div><ol id="initiativeOrder"></ol></div>
-<div><ul id="delayedList"></ul></div>
+<h3>Initiative Order</h3>
+<div>
+    <ol id="initiativeOrder"></ol>
+</div>
+<h3>Delaying</h3>
+<div>
+    <ul id="delayed_list"></ul>
+</div>
+<div id="delaying">
+    <div class="modal-content">
+
+    </div>
+</div>
+
 <div id="controlPanel">
     <button id="nextButton">Next</button>
     <button id="prevButton">Previous</button>
     <button id="delayButton">Delay</button>
+
+
 </div>
 </body>
 </html>
 <script src="{% static 'pages/js/external/jquery/jquery.js' %}"></script>
 <script src="{% static 'pages/js/jquery-ui.min.js' %}"></script>
-<script src="{% static 'pages/js/external/cll/index.js' %}"></script>
+<script src="{% static 'pages/js/combat.js' %}"></script>
+{#<script src="{% static 'pages/js/external/cll/index.js' %}"></script>#}
 <script>
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    var csrftoken = getCookie('csrftoken');
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+    sessionId = $('#currentSession').html()
+    index = 0;
+    $.ajax({
+        url: {% url 'initiative_tracker' %},
+        type: 'POST',
+        data: {
+            pk: sessionId
+        },
+        success: function (data) {
+
+            $.each(data.data, function (index, ob) {
+                $('#initiativeOrder').append("<li class='charListItem'>" + ob.name + "</li>")
+
+            })
+            $('#currentTurn').html(data.data[index].name)
+        }
+    });
+
+    $('#nextButton').click(function () {
+        $.ajax({
+            url: {% url 'next_turn' %},
+            type: 'POST',
+            data: {
+                pk: sessionId,
+            },
+            success: function (data, current) {
+                console.log(data);
+                console.log(current);
+                $('#initiativeOrder').html('');
+                $.each(data.data, function (index, ob) {
+                    $('#initiativeOrder').append("<li class='charListItem'> "
+                        + ob.name + "</li>")
+
+                });
+                $('#currentTurn').html(data.data[index].name)
+            }
+        })
+    });
+
+    $('#prevButton').click(function () {
+        $.ajax({
+            url: {% url 'previous_turn' %},
+            type: 'POST',
+            data: {
+                pk: sessionId,
+            },
+            success: function (data, current) {
+                console.log(data);
+                console.log(current);
+                $('#initiativeOrder').html('');
+                $.each(data.data, function (index, ob) {
+                    $('#initiativeOrder').append("<li class='charListItem'>" + ob.name + "</li>")
+
+                });
+                $('#currentTurn').html(data.data[index].name)
+            }
+        })
+    });
+
+    $('#delayButton').click(function () {
+        $.ajax({
+            url: {% url 'delay_turn' %},
+            type: 'POST',
+            data: {
+                pk: sessionId
+            },
+            success: function (data) {
+
+                $('#initiativeOrder').html('');
+                $.each(data.data, function (index, ob) {
+                    $('#initiativeOrder').append("<li class='charListItem'>" + ob.name + "</li>")
+
+                });
+                $('#currentTurn').html(data.data[index].name);
+                $('#delayed_list').html('');
+                console.log(data.delayed)
+                $.each(data.delayed, function (index, ob) {
+                    $('#delayed_list').append("<li class='delayed_list_item'>" +
+                        "<button class='resumeButton' onclick='resumePlayer(" + ob.id +' ' + ob.type + ")'>Resume</button>" + ob.name + "</li>")
+
+                })
+
+
+            }
+        })
+    });
+
+
+    function resumePlayer(id, charType) {
+        $.ajax({
+            url: {% url 'resume_menu' %},
+            type: 'POST',
+            data: {
+                pk: sessionId,
+                toResume: id,
+                charType: charType,
+                name: name
+            },
+            success: function (data) {
+                console.log(data)
+            }
+
+        })
+    };
 
 
 </script>

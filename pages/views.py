@@ -5,6 +5,8 @@ from django.http import JsonResponse
 from .serializers import NPCSerializer, CharacterSerializer, SessionSerializer, EncounterSerializer
 from .search import get_query, normalize_query
 import json
+import re
+import pickle
 
 
 def home(request):
@@ -38,7 +40,7 @@ def search_api(request):
 
 def create_encounter(request):
     if request.method == 'POST':
-        print(request.POST)
+
         enc = Encounter()
         enc.name = request.POST.get('encounterName')
         enc.description = request.POST.get('description')
@@ -107,9 +109,11 @@ def set_session(request):
 
 
 def combat(request, pk):
-    session = Session.objects.get(pk=pk)
 
-    return render(request, 'pages/combat.html', {'session': session})
+    session = Session.objects.get(pk=pk)
+    delayed = Session.delay
+
+    return render(request, 'pages/combat.html', {'session': session, 'delayed': delayed})
 
 
 def initiative_tracker(request):
@@ -117,9 +121,143 @@ def initiative_tracker(request):
         session = Session.objects.get(pk=request.POST.get('pk'))
         session.first_pickle_list()
         session.save()
+        tracker = pickle.loads(session.tracker)
+        tracker.turn_tracker.sort()
+        characters = tracker.turn_tracker
+        session.delay = ''
+        session.save()
+        character_list = []
+        delayed_list = []
 
-        return JsonResponse({'data': i.data})
 
+        for c in characters:
+            character_list.append({
+                'name': c.name,
+                'id': c.pk,
+                'type': c.char_type
+
+            })
+        current_turn = character_list[0]
+
+        return JsonResponse({'data': character_list, 'current': current_turn, 'delayed': delayed_list})
+
+
+def next_turn(request):
+    if request.method == 'POST':
+        session = Session.objects.get(pk=request.POST.get('pk'))
+
+        tracker = pickle.loads(session.tracker)
+
+        tracker.turn_tracker.append(tracker.turn_tracker.pop(0))
+        session.tracker = pickle.dumps(tracker)
+        session.save()
+        characters = tracker.turn_tracker
+        character_list = []
+        for c in characters:
+            character_list.append({
+                'name': c.name,
+                'id': c.pk,
+                'type': c.char_type
+
+            })
+        current_turn = character_list[0]
+
+        return JsonResponse({'data': character_list, 'current': current_turn})
+
+def previous_turn(request):
+    if request.method == 'POST':
+        session = Session.objects.get(pk=request.POST.get('pk'))
+
+        tracker = pickle.loads(session.tracker)
+
+
+        tracker.turn_tracker.insert(0, tracker.turn_tracker.pop())
+        session.tracker = pickle.dumps(tracker)
+        session.save()
+        characters = tracker.turn_tracker
+        character_list = []
+        for c in characters:
+            character_list.append({
+                'name': c.name,
+                'id': c.pk,
+                'type': c.char_type
+
+            })
+        current_turn = character_list[0]
+
+        return JsonResponse({'data': character_list, 'current': current_turn})
+
+
+def delay_turn(request):
+    if request.method == 'POST':
+        session = Session.objects.get(pk=request.POST.get('pk'))
+        tracker = pickle.loads(session.tracker)
+        if session.delay:
+            delayed = pickle.loads(session.delay)
+        else:
+            delayed = []
+
+        delayed.append(tracker.turn_tracker.pop(0))
+
+        session.tracker = pickle.dumps(tracker)
+        session.delay = pickle.dumps(delayed)
+        session.save()
+        characters = tracker.turn_tracker
+        character_list = []
+        for c in characters:
+            character_list.append({
+                'name': c.name,
+                'id': c.pk,
+                'type': c.char_type
+
+            })
+        delayed_list = []
+        for d in delayed:
+            delayed_list.append({
+                'name': d.name,
+                'id': d.pk,
+                'type': d.char_type
+            })
+        current_turn = character_list[0]
+
+        return JsonResponse({'data': character_list, 'delayed': delayed_list})
+
+
+def resume_menu(request):
+    if request.method == 'POST':
+        session = Session.objects.get(pk=request.POST.get('pk'))
+        tracker = pickle.loads(session.tracker)
+        if session.delay:
+            delayed = pickle.loads(session.delay)
+        else:
+            delayed = []
+
+        # rCharacter = request.POST.get('toResume')
+        # rType = request.POST.get('charType')
+        name = request.POST.get('name')
+
+        tracker.turn_tracker.insert(delayed.pop(name))
+        print(tracker.turn_tracker)
+        print(delayed)
+
+        characters = tracker.turn_tracker
+        character_list = []
+        for c in characters:
+            character_list.append({
+                'name': c.name,
+                'id': c.pk,
+                'type': c.char_type
+
+            })
+        delayed_list = []
+        for d in delayed:
+            delayed_list.append({
+                'name': d.name,
+                'id': d.pk,
+                'type': d.char_type
+            })
+
+        return JsonResponse({'data': character_list, 'delayed': delayed_list})
 
 def set_initiatve_window(request):
     if request.method == 'POST':
@@ -144,11 +282,29 @@ def set_initiatve_window(request):
 
 def set_initiative(request):
     if request.method == 'POST':
-        session = Session.objects.get(pk=request.POST.get('pk'))
-        print(request.POST)
-        for x in request.POST.getlist('initiatives[]'):
-            print(json.dumps(x))
+
+
+        myDict = dict(request.POST)
+        myList = myDict.items()
+        for x in myList:
+
+            y = x[0][12:-1]
+
+            z = re.split('_', y)
+
+            character_type = z[0]
+            pk = z[1]
+            initiative = str(x[1])[2:-2]
+            if character_type == 'pc':
+                character = PC.objects.get(pk=pk)
+                character.initiative = initiative
+                character.save()
+            if character_type == 'npc':
+                character = NPC.objects.get(pk=pk)
+                character.initiative = initiative
+                character.save()
+
         return JsonResponse({'message': "Hooray"})
 
 def start_combat(request):
-    pass
+    session = Session.objects.get(pk=request.POST.get('pk'))

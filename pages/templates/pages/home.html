@@ -253,22 +253,22 @@
     $('#startCombat').click(function () {
         event.preventDefault()
         sessionId = $('#currentSession').html()
-        var values = []
+        var values = {}
         $.each($('#setInitList').children(), function (i, field) {
-            var dict =  {}
-                dict[$(field).attr('id')] = $(field).val()
-            values.push(dict);
+            values[$(field).attr('id')] = field.value;
         });
-        console.log(values)
+
         $.ajax({
             url: {% url 'set_initiative' %},
             type: 'POST',
             data: {
-                pk: sessionId,
-                'initiatives[]': values
+
+                initiatives: values
             },
             success: function (data) {
-                console.log(data)
+
+                window.open('/combat/'+ sessionId + '/', '_self')
+
             }
         })
     })
