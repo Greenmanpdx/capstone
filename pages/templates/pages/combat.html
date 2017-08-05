@@ -180,8 +180,8 @@
                 $('#delayed_list').html('');
 
                 $.each(data.delayed, function (index, ob) {
-                    console.log(ob)
                     
+
                     $('#delayed_list').append("<li class='delayed_list_item'>" +
                         "<button onclick='resumePlayer(" + ob.id +")'>Resume</button>" + ob.name + "</li>")
 

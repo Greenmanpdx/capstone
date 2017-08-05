@@ -161,6 +161,7 @@ def next_turn(request):
 
             })
         current_turn = character_list[0]
+        print('tracker: {}'.format(tracker.turn_tracker))
 
         return JsonResponse({'data': character_list, 'current': current_turn})
 
@@ -184,6 +185,7 @@ def previous_turn(request):
 
             })
         current_turn = character_list[0]
+        print('tracker: {}'.format(tracker.turn_tracker))
 
         return JsonResponse({'data': character_list, 'current': current_turn})
 
@@ -219,6 +221,8 @@ def delay_turn(request):
                 'char_type': d.char_type
             })
         current_turn = character_list[0]
+        print('tracker: {}'.format(tracker.turn_tracker))
+        print('delayed: {}'.format(delayed))
 
         return JsonResponse({'data': character_list, 'delayed': delayed_list})
 
@@ -242,9 +246,11 @@ def resume_menu(request):
 
 
         tracker.turn_tracker.insert(0, delayed.pop(delayed.index(charToPop)))
-        print(tracker.turn_tracker)
-        print(delayed)
-
+        print('tracker: {}'.format(tracker.turn_tracker))
+        print('delayed: {}'.format(delayed))
+        session.tracker = pickle.dumps(tracker)
+        session.delay = pickle.dumps(delayed)
+        session.save()
         characters = tracker.turn_tracker
         character_list = []
         for c in characters:
