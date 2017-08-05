@@ -208,7 +208,7 @@ def delay_turn(request):
             character_list.append({
                 'name': c.name,
                 'id': c.pk,
-                'type': c.char_type
+                'char_type': c.char_type
 
             })
         delayed_list = []
@@ -216,7 +216,7 @@ def delay_turn(request):
             delayed_list.append({
                 'name': d.name,
                 'id': d.pk,
-                'type': d.char_type
+                'char_type': d.char_type
             })
         current_turn = character_list[0]
 
@@ -234,9 +234,14 @@ def resume_menu(request):
 
         # rCharacter = request.POST.get('toResume')
         # rType = request.POST.get('charType')
-        name = request.POST.get('name')
 
-        tracker.turn_tracker.insert(delayed.pop(name))
+        charToPop = PC.objects.get(pk=request.POST.get('id'))
+        if charToPop.char_type == 'pc':
+            toPop = 'PC: ' + charToPop.name
+        print(toPop)
+
+
+        tracker.turn_tracker.insert(0, delayed.pop(delayed.index(charToPop)))
         print(tracker.turn_tracker)
         print(delayed)
 

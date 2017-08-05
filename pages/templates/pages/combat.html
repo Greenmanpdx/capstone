@@ -144,10 +144,12 @@
                 });
                 $('#currentTurn').html(data.data[index].name);
                 $('#delayed_list').html('');
-                console.log(data.delayed)
+
                 $.each(data.delayed, function (index, ob) {
+                    console.log(ob)
+                    character = (ob.char_type).toString();
                     $('#delayed_list').append("<li class='delayed_list_item'>" +
-                        "<button class='resumeButton' onclick='resumePlayer(" + ob.id +' ' + ob.type + ")'>Resume</button>" + ob.name + "</li>")
+                        "<button onclick='resumePlayer(" + ob.id +")'>Resume</button>" + ob.name + "</li>")
 
                 })
 
@@ -157,18 +159,33 @@
     });
 
 
-    function resumePlayer(id, charType) {
+    function resumePlayer(id) {
         $.ajax({
             url: {% url 'resume_menu' %},
             type: 'POST',
             data: {
                 pk: sessionId,
-                toResume: id,
-                charType: charType,
-                name: name
+
+                id: id,
+
             },
             success: function (data) {
                 console.log(data)
+                $('#initiativeOrder').html('');
+                $.each(data.data, function (index, ob) {
+                    $('#initiativeOrder').append("<li class='charListItem'>" + ob.name + "</li>")
+
+                });
+                $('#currentTurn').html(data.data[index].name);
+                $('#delayed_list').html('');
+
+                $.each(data.delayed, function (index, ob) {
+                    console.log(ob)
+                    
+                    $('#delayed_list').append("<li class='delayed_list_item'>" +
+                        "<button onclick='resumePlayer(" + ob.id +")'>Resume</button>" + ob.name + "</li>")
+
+                })
             }
 
         })
