@@ -1,0 +1,25 @@
+#npcList{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+
+}
+
+.npcListItem{
+    /*width: 200px;*/
+    /*height: 100px;*/
+    margin: 20px;
+    list-style: none;
+}
+
+.image img{
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 150px;
+}
+
+.toAdd{
+    width: 25px;
+}

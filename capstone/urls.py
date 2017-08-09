@@ -16,6 +16,8 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from pages import views as page_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -40,4 +42,4 @@ urlpatterns = [
     url(r'^delay_turn/', page_views.delay_turn, name='delay_turn'),
     url(r'^resume_menu/', page_views.resume_menu, name='resume_menu'),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,6 +1,9 @@
 .modal-content{
     padding:0; border:0; margin-top:25px;
 }
+body{
+
+}
 
 .charListItem{
     list-style: none;

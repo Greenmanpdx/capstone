@@ -1,0 +1,35 @@
+body{
+
+    font-size: 2em;
+    background-color: #0b3e6f;
+    text-align: center;
+}
+#mainView{
+    display: flex;
+}
+
+#currentTurnBlock{
+    background-color: #000000;
+    color: white;
+    align-items: center;
+    width: 70%;
+    height: 90%
+}
+#lists{
+    width: 30%;
+    justify-content: space-around ;
+    background-color: green;
+    list-style: none;
+}
+#currentImage{
+    width: 75%;
+    height:500px;
+    allign-self: center;
+}
+#currentImage img{
+     max-width: 100%;
+    max-height: 100%;
+
+
+}
+

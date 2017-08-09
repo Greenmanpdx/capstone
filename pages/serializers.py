@@ -16,6 +16,7 @@ class CharacterSerializer(serializers.ModelSerializer):
 
 class MonsterSerializer(serializers.ModelSerializer):
     npc = NPCSerializer(many=True)
+
     class Meta:
         model = Monster
         fields = ('NPC', 'number')

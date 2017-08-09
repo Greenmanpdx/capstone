@@ -31,7 +31,7 @@ def search_api(request):
         name__contains=request.POST.get('name')).filter(
         cr__gte=request.POST.get('crLow')).filter(
         cr__lte=request.POST.get('crHigh')).filter(
-        environment__contains=request.POST.get('environment')).filter(
+                environment__contains=request.POST.get('environment')).filter(
         type__contains=request.POST.get('type'))
 
     s = NPCSerializer(npcs, many=True)
@@ -134,7 +134,8 @@ def initiative_tracker(request):
             character_list.append({
                 'name': c.name,
                 'id': c.pk,
-                'type': c.char_type
+                'type': c.char_type,
+                'picture': c.picture.url
 
             })
         current_turn = character_list[0]
@@ -157,7 +158,8 @@ def next_turn(request):
             character_list.append({
                 'name': c.name,
                 'id': c.pk,
-                'type': c.char_type
+                'type': c.char_type,
+                'picture': c.picture.url
 
             })
         current_turn = character_list[0]
@@ -181,7 +183,8 @@ def previous_turn(request):
             character_list.append({
                 'name': c.name,
                 'id': c.pk,
-                'type': c.char_type
+                'type': c.char_type,
+                'picture': c.picture.url
 
             })
         current_turn = character_list[0]
@@ -210,7 +213,8 @@ def delay_turn(request):
             character_list.append({
                 'name': c.name,
                 'id': c.pk,
-                'char_type': c.char_type
+                'char_type': c.char_type,
+                'picture': c.picture.url
 
             })
         delayed_list = []
@@ -218,7 +222,8 @@ def delay_turn(request):
             delayed_list.append({
                 'name': d.name,
                 'id': d.pk,
-                'char_type': d.char_type
+                'char_type': d.char_type,
+                'picture': c.picture.url
             })
         current_turn = character_list[0]
         print('tracker: {}'.format(tracker.turn_tracker))
@@ -257,7 +262,8 @@ def resume_menu(request):
             character_list.append({
                 'name': c.name,
                 'id': c.pk,
-                'type': c.char_type
+                'type': c.char_type,
+                'picture': c.picture.url
 
             })
         delayed_list = []
@@ -265,7 +271,8 @@ def resume_menu(request):
             delayed_list.append({
                 'name': d.name,
                 'id': d.pk,
-                'type': d.char_type
+                'type': d.char_type,
+                'picture': c.picture.url
             })
 
         return JsonResponse({'data': character_list, 'delayed': delayed_list})

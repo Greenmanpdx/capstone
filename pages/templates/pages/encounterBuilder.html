@@ -99,11 +99,12 @@
                 $('#npcList').html('');
                 $.each(data.data, function (i, o) {
                     $('#npcList').append(
-                        "<li class='npcList'>" +
-                            "<div class='name'>" + o.name + "</div>" +
-                            "<div class='cr'> CR: " + o.cr + "</div>" +
-                            "<label for='number'>number to add</label>" +
-                            "<input type='number' name='number' id='numbToAdd" + o.id + "'>" +
+                        "<li class='npcListItem'>" +
+                            "<div class='name'>" + o.name + " CR: " + o.cr + "</div>" +
+
+                            "<div class='image'><img src='" + o.picture + "' ></div>" +
+
+                            "<input type='number' class='toAdd' name='number' id='numbToAdd" + o.id + "'>" +
                             "<button class='addButton' onclick='addMonster("+ o.id + ")'>add</button>" +
                             "<span id='npcPk' style='display: none'>{{ o.id }}</span>" +
                         "</li>"
