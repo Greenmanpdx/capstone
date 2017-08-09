@@ -10,13 +10,20 @@
 <body>
 <div id="mainView">
     <div><span id="currentSession" style="visibility: hidden">{{ session.id }}</span></div>
-    <div id="currentTurnBlock">
-        <h3>Current Turn</h3>
-        <div id="currentTurn"></div>
+    <div id="turnDisplay">
+        <div id="currentTurnBlock">
+            <h3>Current Turn</h3>
+            <div id="currentTurn"></div>
+        </div>
         <div id="currentImage"></div>
+        <div id="controlPanel">
+            <button id="nextButton">Next</button>
+            <button id="prevButton">Previous</button>
+            <button id="delayButton">Delay</button>
+        </div>
     </div>
     <div id="lists">
-        <div id="initiativeOrder">
+        <div id="initiativeOrderBlock">
             <h3>Initiative Order</h3>
             <div>
                 <ol id="initiativeOrder"></ol>
@@ -32,13 +39,7 @@
     </div>
 
 </div>
-<div id="controlPanel">
-        <button id="nextButton">Next</button>
-        <button id="prevButton">Previous</button>
-        <button id="delayButton">Delay</button>
 
-
-    </div>
 <script src="{% static 'pages/js/external/jquery/jquery.js' %}"></script>
 <script src="{% static 'pages/js/jquery-ui.min.js' %}"></script>
 <script src="{% static 'pages/js/combat.js' %}"></script>
