@@ -1,56 +1,80 @@
 body{
 
     font-size: 2em;
-    background-color: #0b3e6f;
+    background-color: #fff9dd;
     text-align: center;
 }
 #mainView{
     display: flex;
+    width: 98%;
+    margin-left: auto;
+    margin-right: auto;
 }
-}
+
 #lists{
     width: 30%;
     justify-content: space-around ;
-    background-color: green;
+    background: linear-gradient(green, blue, blueviolet, purple);
     list-style: none;
+    border-radius: 25px;
+    padding:1em;
+    border: solid;
 
+}
+
+#delayed_list{
+    list-style: none;
 }
 
 #turnDisplay{
     justify-items: left;
     width: 70%;
-    background-color: #7852b2;
+    background: linear-gradient(purple, blueviolet, blue, green);
     border-radius: 25px;
+    padding:1em;
+    border: solid;
 }
 
 #currentTurnBlock {
     background-color: #000000;
     color: white;
     align-items: center;
-    width: 70%;
-    height: 20%;
-    padding: 1em;
+    width: 75%;
+    height: 15%;
+    padding: .5em;
     border-radius: 25px;
     display: block;
+    margin: auto;
+}
+h3{
     margin: auto;
 }
 
 #currentImage{
     width: 75%;
-    height: 14em;
+    height: 13em;
     display: block;
     margin: auto;
+    margin-top: .5em;
 
 
+}
+#controlPanel{
+    display: block;
+    margin-top: .5em;
 }
 
 #currentImage img{
      max-width: 100%;
     max-height: 100%;
-    border: #0b3e6f;
+    border: solid #000000;
      border-radius: 25px;
 
 
+}
+
+.ui-button{
+    height: 2emem;
 }
 
 

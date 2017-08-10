@@ -41,5 +41,6 @@ urlpatterns = [
     url(r'^previous_turn/', page_views.previous_turn, name='previous_turn'),
     url(r'^delay_turn/', page_views.delay_turn, name='delay_turn'),
     url(r'^resume_menu/', page_views.resume_menu, name='resume_menu'),
+    url(r'^kill/', page_views.kill, name='kill'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

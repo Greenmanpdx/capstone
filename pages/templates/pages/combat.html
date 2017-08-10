@@ -1,208 +1,242 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Combat</title>
-    <link rel="stylesheet" href="{% static 'pages/js/jquery-ui.min.css' %}">
+{% block header %}
+
     <link rel="stylesheet" href="{% static 'pages/css/combat.css' %}">
-</head>
-<body>
-<div id="mainView">
+{% endblock %}
+
+
+
+{% block content %}
+    <div id="mainView">
+
+        <div id="turnDisplay">
+            <div id="currentTurnBlock">
+                <h3>Current Turn</h3>
+                <div id="currentTurn"></div>
+            </div>
+            <div id="currentImage"></div>
+            <div id="controlPanel">
+
+                <button id="prevButton">Previous</button>
+                <button id="delayButton">Delay</button>
+                <button id="nextButton">Next</button>
+            </div>
+        </div>
+        <div id="lists">
+            <div id="initiativeOrderBlock">
+                <h3>Initiative Order</h3>
+                <div>
+                    <ol id="initiativeOrder"></ol>
+                </div>
+            </div>
+            <div id="delaying">
+                <h3>Delaying</h3>
+                <div>
+                    <ul id="delayed_list"></ul>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
     <div><span id="currentSession" style="visibility: hidden">{{ session.id }}</span></div>
-    <div id="turnDisplay">
-        <div id="currentTurnBlock">
-            <h3>Current Turn</h3>
-            <div id="currentTurn"></div>
-        </div>
-        <div id="currentImage"></div>
-        <div id="controlPanel">
-            <button id="nextButton">Next</button>
-            <button id="prevButton">Previous</button>
-            <button id="delayButton">Delay</button>
-        </div>
-    </div>
-    <div id="lists">
-        <div id="initiativeOrderBlock">
-            <h3>Initiative Order</h3>
-            <div>
-                <ol id="initiativeOrder"></ol>
-            </div>
-        </div>
-        <div id="delaying">
-            <h3>Delaying</h3>
-            <div>
-                <ul id="delayed_list"></ul>
-            </div>
-        </div>
+{% endblock %}
 
-    </div>
+{% block js %}
+    <script src="{% static 'pages/js/combat.js' %}"></script>
+    {#<script src="{% static 'pages/js/external/cll/index.js' %}"></script>#}
+    <script>
 
-</div>
-
-<script src="{% static 'pages/js/external/jquery/jquery.js' %}"></script>
-<script src="{% static 'pages/js/jquery-ui.min.js' %}"></script>
-<script src="{% static 'pages/js/combat.js' %}"></script>
-{#<script src="{% static 'pages/js/external/cll/index.js' %}"></script>#}
-<script>
-    function getCookie(name) {
-        var cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            var cookies = document.cookie.split(';');
-            for (var i = 0; i < cookies.length; i++) {
-                var cookie = jQuery.trim(cookies[i]);
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    var csrftoken = getCookie('csrftoken');
-
-    function csrfSafeMethod(method) {
-        // these HTTP methods do not require CSRF protection
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
-
-    $.ajaxSetup({
-        beforeSend: function (xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            }
-        }
-    });
-    sessionId = $('#currentSession').html()
-    index = 0;
-    $.ajax({
-        url: {% url 'initiative_tracker' %},
-        type: 'POST',
-        data: {
-            pk: sessionId
-        },
-        success: function (data) {
-            console.log(data)
-            $.each(data.data, function (index, ob) {
-                $('#initiativeOrder').append("<li class='charListItem'>" + ob.name + "</li>")
-
-            })
-            $('#currentTurn').html(data.data[index].name)
-            $('#currentImage').html("<img src='" + data.data[index].picture + "'>")
-        }
-    });
-
-    $('#nextButton').click(function () {
+        sessionId = $('#currentSession').html()
+        index = 0;
         $.ajax({
-            url: {% url 'next_turn' %},
-            type: 'POST',
-            data: {
-                pk: sessionId,
-            },
-            success: function (data, current) {
-                console.log(data);
-                console.log(current);
-                $('#initiativeOrder').html('');
-                $.each(data.data, function (index, ob) {
-                    $('#initiativeOrder').append("<li class='charListItem'> "
-                        + ob.name + "</li>")
-
-                });
-                $('#currentTurn').html(data.data[index].name)
-                $('#currentImage').html("<img src='" + data.data[index].picture + "'>")
-            }
-        })
-    });
-
-    $('#prevButton').click(function () {
-        $.ajax({
-            url: {% url 'previous_turn' %},
-            type: 'POST',
-            data: {
-                pk: sessionId,
-            },
-            success: function (data, current) {
-                console.log(data);
-                console.log(current);
-                $('#initiativeOrder').html('');
-                $.each(data.data, function (index, ob) {
-                    $('#initiativeOrder').append("<li class='charListItem'>" + ob.name + "</li>")
-
-                });
-                $('#currentTurn').html(data.data[index].name)
-                $('#currentImage').html("<img src='" + data.data[index].picture + "'>")
-            }
-        })
-    });
-
-    $('#delayButton').click(function () {
-        $.ajax({
-            url: {% url 'delay_turn' %},
+            url: {% url 'initiative_tracker' %},
             type: 'POST',
             data: {
                 pk: sessionId
             },
             success: function (data) {
 
-                $('#initiativeOrder').html('');
                 $.each(data.data, function (index, ob) {
-                    $('#initiativeOrder').append("<li class='charListItem'>" + ob.name + "</li>")
-
+                    redrawInitiative(index, ob)
                 });
                 $('#currentTurn').html(data.data[index].name);
-                $('#currentImage').html("<img src='" + data.data[index].picture + "'>")
-                $('#delayed_list').html('');
-
-                $.each(data.delayed, function (index, ob) {
-                    console.log(ob)
-                    character = (ob.char_type).toString();
-                    $('#delayed_list').append("<li class='delayed_list_item'>" +
-                        "<button onclick='resumePlayer(" + ob.id +")'>Resume</button>" + ob.name + "</li>")
-
-                })
-
-
+                $('#currentImage').html("<img src='" + data.data[index].picture + "'>");
             }
-        })
-    });
+        });
+
+        $('#nextButton').click(function () {
+            $.ajax({
+                url: {% url 'next_turn' %},
+                type: 'POST',
+                data: {
+                    pk: sessionId,
+                },
+                success: function (data, current) {
+                    console.log(data);
+                    console.log(current);
+                    $('#initiativeOrder').html('');
+                    $.each(data.data, function (index, ob) {
+                        redrawInitiative(index, ob)
+                    });
+                    $('#currentTurn').html(data.data[index].name)
+                    $('#currentImage').html("<img src='" + data.data[index].picture + "'>")
+                }
+            })
+        });
+
+        $('#prevButton').click(function () {
+            $.ajax({
+                url: {% url 'previous_turn' %},
+                type: 'POST',
+                data: {
+                    pk: sessionId,
+                },
+                success: function (data, current) {
+                    console.log(data);
+                    console.log(current);
+                    $('#initiativeOrder').html('');
+                    $.each(data.data, function (index, ob) {
+                        redrawInitiative(index, ob)
+                    });
+                    $('#currentTurn').html(data.data[index].name)
+                    $('#currentImage').html("<img src='" + data.data[index].picture + "'>")
+                }
+            })
+        });
+
+        $('#delayButton').click(function () {
+            $.ajax({
+                url: {% url 'delay_turn' %},
+                type: 'POST',
+                data: {
+                    pk: sessionId
+                },
+                success: function (data) {
+
+                    $('#initiativeOrder').html('');
+                    $.each(data.data, function (index, ob) {
+                        redrawInitiative(index, ob)
+                    });
+                    $('#currentTurn').html(data.data[index].name);
+                    $('#currentImage').html("<img src='" + data.data[index].picture + "'>")
+                    $('#delayed_list').html('');
+
+                    $.each(data.delayed, function (index, ob) {
+                        console.log(ob)
+                        var char_type = (ob.char_type).toString();
+                        console.log(char_type)
+                        $('#delayed_list').append("<li class='delayed_list_item'>" +
+                            "<button onclick=\"resumePlayer(" + ob.id + ", '" + char_type + "')\">" + ob.name + "</button></li>")
+
+                    })
 
 
-    function resumePlayer(id) {
-        $.ajax({
-            url: {% url 'resume_menu' %},
-            type: 'POST',
-            data: {
-                pk: sessionId,
+                }
+            })
+        });
 
-                id: id,
 
-            },
-            success: function (data) {
-                console.log(data)
-                $('#initiativeOrder').html('');
-                $.each(data.data, function (index, ob) {
-                    $('#initiativeOrder').append("<li class='charListItem'>" + ob.name + "</li>")
+        function resumePlayer(id, char_type) {
+            $.ajax({
+                url: {% url 'resume_menu' %},
+                type: 'POST',
+                data: {
+                    pk: sessionId,
 
+                    id: id,
+                    char_type: char_type,
+
+                },
+                success: function (data) {
+                    console.log(data)
+                    $('#initiativeOrder').html('');
+                    $.each(data.data, function (index, ob) {
+                        redrawInitiative(index, ob)
+                    });
+                    $('#currentTurn').html(data.data[index].name);
+                    $('#currentImage').html("<img src='" + data.data[index].picture + "'>");
+                    $('#delayed_list').html('');
+
+                    $.each(data.delayed, function (index, ob) {
+
+                        var char_type = (ob.char_type).toString();
+                        $('#delayed_list').append("<li class='delayed_list_item'>" +
+                            "<button onclick=\"resumePlayer(" + ob.id + ", '" + char_type + "')\">" + ob.name + "</button></li>")
+
+                    })
+                }
+
+            })
+        };
+
+        function kill(id, char_type) {
+            console.log(char_type)
+            $.ajax({
+                url: {% url 'kill' %},
+                type: 'POST',
+                data: {
+                    pk: sessionId,
+
+                    id: id,
+                    char_type: char_type,
+
+                },
+                success: function (data) {
+                    console.log(data);
+                    $('#initiativeOrder').html('');
+                    var i = 0;
+                    $.each(data.data, function (index, ob) {
+                        ++i
+                        redrawInitiative(i, ob)
+                    });
+
+
+                    $('#currentTurn').html(data.data[index].name);
+                    $('#currentImage').html("<img src='" + data.data[index].picture + "'>");
+                    $('#delayed_list').html('');
+
+                    $.each(data.delayed, function (index, ob) {
+
+                        var char_type = (ob.char_type).toString();
+                        $('#delayed_list').append("<li class='delayed_list_item'>" +
+                            "<button onclick=\"resumePlayer(" + ob.id + ", '" + char_type + "')\">" + ob.name + "</button></li>")
+
+                    })
+                }
+
+            })
+
+        }
+
+        function redrawInitiative(i, ob) {
+            console.log(i)
+            console.log(ob)
+            var li = document.createElement('li');
+            li.className = 'charListItem';
+            li.innerHTML = "<div id='charMenu" + i + "' title='Kill'>" +
+                "<button class='kill' onclick=\"kill(" + ob.id + ", '" + ob.char_type + "')\">Kill</button></div>"
+                + ob.name;
+            $('#initiativeOrder').append(li);
+            $(function () {
+                $("#charMenu" + i).dialog({
+                    autoOpen: false,
+                    show: {
+                        effect: "blind",
+                        duration: 1000
+                    },
+                    hide: {
+                        effect: "explode",
+                        duration: 1000
+                    }
                 });
-                $('#currentTurn').html(data.data[index].name);
-                $('#currentImage').html("<img src='" + data.data[index].picture + "'>")
-                $('#delayed_list').html('');
 
-                $.each(data.delayed, function (index, ob) {
-                    
+                $(li).on("click", function () {
+                    $("#charMenu" + i).dialog("open");
+                });
+            });
+        }
+    </script>
 
-                    $('#delayed_list').append("<li class='delayed_list_item'>" +
-                        "<button onclick='resumePlayer(" + ob.id +")'>Resume</button>" + ob.name + "</li>")
-
-                })
-            }
-
-        })
-    };
-
-
-</script>
-</body>
-</html>
+{% endblock %}

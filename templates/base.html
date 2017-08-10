@@ -4,17 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}D20 Encounters{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'pages/js/jquery-ui.min.css' %}">
+    <link rel="stylesheet" href="{% static 'pages/css/base.css' %}">
+    {% block header %}
+    {% endblock %}
 </head>
 <body>
-    {% include '_nav.html' %}
-{% block header %}
-{% endblock %}
+{% include '_nav.html' %}
+
 <div class="container">
 
     {% block content %}
     {% endblock %}
 </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="{% static 'pages/js/external/jquery/jquery.js' %}"></script>
+<script src="{% static 'pages/js/jquery-ui.min.js' %}"></script>
 <script>
     function getCookie(name) {
         var cookieValue = null;
@@ -31,11 +35,14 @@
         }
         return cookieValue;
     }
+
     var csrftoken = getCookie('csrftoken');
+
     function csrfSafeMethod(method) {
         // these HTTP methods do not require CSRF protection
         return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
     }
+
     $.ajaxSetup({
         beforeSend: function (xhr, settings) {
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
