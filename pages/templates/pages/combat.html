@@ -215,12 +215,12 @@
             console.log(ob)
             var li = document.createElement('li');
             li.className = 'charListItem';
-            li.innerHTML = "<div id='charMenu" + i + "' title='Kill'>" +
-                "<button class='kill' onclick=\"kill(" + ob.id + ", '" + ob.char_type + "')\">Kill</button></div>"
+            li.innerHTML = "<div id='charMenu" + ob.char_type + ob.id + "' title='Kill'>" +
+                "<button id='kill"+ ob.char_type + ob.id +"' onclick=\"kill(" + ob.id + ", '" + ob.char_type + "')\">Kill</button></div>"
                 + ob.name;
             $('#initiativeOrder').append(li);
             $(function () {
-                $("#charMenu" + i).dialog({
+                $("#charMenu"  + ob.char_type + ob.id).dialog({
                     autoOpen: false,
                     show: {
                         effect: "blind",
@@ -233,7 +233,7 @@
                 });
 
                 $(li).on("click", function () {
-                    $("#charMenu" + i).dialog("open");
+                    $("#charMenu" + ob.char_type + ob.id).dialog("open");
                 });
             });
         }
