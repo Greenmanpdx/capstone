@@ -2,9 +2,123 @@
     padding:0; border:0; margin-top:25px;
 }
 body{
+    margin: 0;
+    padding: 0;
+}
+
+#head{
+    background-color: green;
+    margin: 0;
+}
+
+#title{
+    font-size: 2em;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 50%;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+
+}
+#title h1{
+    margin: 0;
+}
+#title img{
+    width: 50px;
+    height: 50px;
+    margin-top: 12px;
+    display: block;
+
+}
+#subTitle{
+    margin: auto;
+    width: 50%;
+    text-align: center;
+    font-size: 1.5em;
+}
+
+#subTitle h2{
+    margin-top: 0;
+}
+
+
+#pathfinder{
+    width: 300px;
+    margin-bottom: 0;
+}
+.charListItem{
+    list-style: none;
+}
+
+#mainView{
+    display: flex;
+    flex-direction: row;
+    background-color: #0b58a2;
+    margin: 0;
 
 }
 
-.charListItem{
-    list-style: none;
+#initiativeListBox{
+    margin: 10%;
+    border: solid;
+    align-self: right;
+    background-color: #00B4FF;
+    width: 20%;
+    text-align: center;
+}
+
+#charList{
+    font-size: 1.5em;
+    padding: 0;
+}
+
+#sessionMenu{
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+
+
+}
+
+
+
+.box{
+    border: solid;
+    /*width: 50%;*/
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex: 1;
+    margin-right: 0px;
+    margin-left: 100px;
+    margin-bottom: 10px;
+    background-color: #00B4FF;
+
+}
+
+.group{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.init{
+    width: 30px;
+}
+
+.modal-content{
+
+
+}
+
+#setInitList{
+    display: flex;
+    flex-direction: column;
+}
+
+.entry{
+
 }

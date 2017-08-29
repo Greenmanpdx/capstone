@@ -6,99 +6,138 @@
     <title>Main</title>
     <link rel="stylesheet" href="{% static 'pages/js/jquery-ui.min.css' %}">
     <link rel="stylesheet" href="{% static 'pages/css/home.css' %}">
-</head>
-<body>
-<h1>D20 Encounters</h1>
-<h2>Pathfinder Edition</h2>
+</head><div id ='head'>
+    <div id="title">
+        <img src="{% static 'images/d20.png' %}">
+        <h1>D20 Encounters</h1>
+         <img src="{% static 'images/d20.png' %}">
+    </div>
+    <div id="subTitle">
+        <img id='pathfinder' src="{% static 'images/pathfinder.png' %}">
+
+    </div>
+</div>
+
 <div id="mainView" class="widget">
-    <div>Current Session: <span id="currentSession">none</span></div>
-    <button id="newSession">New Session</button>
-    <button id="loadSessionButton">Load Session</button>
-    <div id="loadSession">
-        <div class="modal-content" id="load">
-            {% for s in session %}
-                {{ s.session_date }}
-                <button id="setSession" onclick="setSession({{ s.id }})">add</button><br>
-            {% endfor %}
-        </div>
-    </div>
-    <div id="add">
-        <button id="addPlayerButton">Add Player</button>
-        <div id="addPlayer">
-            <div class="modal-content">
-                {% for p in pc %}
-                    {{ p.name }}
-                    <button id="addChar" onclick="addCharacter({{ p.id }})">add</button><br>
-                {% endfor %}
+    <div id="sessionMenu">
+        <div>Current Session: <span id="currentSession">none</span></div>
+        <div id="sessionBox" class="group" >
+            <div id="newSessionBox" class="box">
+                <h2>Create a new session</h2>
+                <p>This will create a session and saved by date</p>
+                <button id="newSession">New Session</button>
+            </div>
+            <div id="loadSessionBox" class="box">
+                <h2>Load Session</h2>
+                <p>Load a session already in progress</p>
+                <button id="loadSessionButton">Load Session</button>
+                <div id="loadSession">
+                    <div class="modal-content" id="load">
+                        {% for s in session %}
+                            {{ s.session_date }}
+                            <button id="setSession" onclick="setSession({{ s.id }})">add</button><br>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
 
-        <button id="addEncounterButton">Add Encounter</button>
-        <div id="addEncounter">
-            <div class="modal-content">
-                {% for e in enc %}
-                    {{ e.name }}
-                    <button id="addEnc" onclick="addEncounter({{ e.id }})">add</button><br>
-                {% endfor %}
+        <div id="add" class="group">
+            <div id="addPlayerBox" class="box">
+                <h2>Add Player Character</h2>
+                <p>Add an existinig PC to the session</p>
+                <button id="addPlayerButton">Add Player</button>
+                <div id="addPlayer">
+                    <div class="modal-content">
+                        {% for p in pc %}
+                            {{ p.name }}
+                            <button id="addChar" onclick="addCharacter({{ p.id }})">add</button><br>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div id="addEncounterBox" class="box">
+                <h2>Add Encounter</h2>
+                <p>Add an existing encounter to the session</p>
+                <button id="addEncounterButton">Add Encounter</button>
+                <div id="addEncounter">
+                    <div class="modal-content">
+                        {% for e in enc %}
+                            {{ e.name }}
+                            <button id="addEnc" onclick="addEncounter({{ e.id }})">add</button><br>
+                        {% endfor %}
+                    </div>
+                </div>
             </div>
         </div>
 
 
+        <div id="create" class="group">
+            <div id="createPlayerBox" class="box">
+                <h2>Create Player</h2>
+                <p>Create a new Player Character</p>
+                <button id="createPlayerButton">Create PC</button>
+                <div id="createPlayer">
+                    <div class="modal-content">
+                        <form action="{% url 'create_player' %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <label for="chracterName">Character Name</label>
+                            <input type="text" name="chracterName" id="chracterName">
+                            <label for="playerName">Player Name</label>
+                            <input type="text" name="playerName" id="playerName">
+                            <label for="initiativeBonus">Initiative Bonus</label>
+                            <input type="number" name="initiativeBonus" id="initiativeBonus">
+                            <label for="ac">AC</label>
+                            <input type="number" name="ac" id="ac">
+
+                            <input type="submit" value="Add PC"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div id="createEncounterBox" class="box">
+                <h2>Create Encounter</h2>
+                <p>Create a new Encounter</p>
+                <button id="createEncounterButton">Create Encounter</button>
+                <div id="dialog" title="Create Encounter">
+                    <div class="modal-content">
+                        <form action="{% url 'create_encounter' %}" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <label for="encounterName">Name</label>
+                            <input type="text" name="encounterName" id="encounterName">
+                            <label for="description">Description</label>
+                            <input type="text" name="description" id="description">
+
+                            <input type="submit" value="Add NPCs"/>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div id="create">
-        <button id="createPlayerButton">Create PC</button>
-        <div id="createPlayer">
+
+
+
+    <div id="initiativeListBox">
+        <div>
+            <ul id="charList"></ul>
+
+        </div>
+
+        <button id="rollInitiativeButton">Roll Initiative</button>
+        <div id="setInitiative" title="Set Initiative">
             <div class="modal-content">
-                <form action="{% url 'create_player' %}" method="post" enctype="multipart/form-data">
+                <form id="initiative_form">
                     {% csrf_token %}
-                    <label for="chracterName">Character Name</label>
-                    <input type="text" name="chracterName" id="chracterName">
-                    <label for="playerName">Player Name</label>
-                    <input type="text" name="playerName" id="playerName">
-                    <label for="initiativeBonus">Initiative Bonus</label>
-                    <input type="number" name="initiativeBonus" id="initiativeBonus">
-                    <label for="ac">AC</label>
-                    <input type="number" name="ac" id="ac">
+    {#                <ul id="setInitList"></ul>#}
+                    <fieldset id="setInitList"></fieldset>
 
-                    <input type="submit" value="Add PC"/>
-                </form>
+                    <button id="startCombat">Start Combat</button>
+               </form>
             </div>
         </div>
-
-        <button id="createEncounterButton">Create Encounter</button>
-        <div id="dialog" title="Create Encounter">
-            <div class="modal-content">
-                <form action="{% url 'create_encounter' %}" method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <label for="encounterName">Name</label>
-                    <input type="text" name="encounterName" id="encounterName">
-                    <label for="description">Description</label>
-                    <input type="text" name="description" id="description">
-
-                    <input type="submit" value="Add NPCs"/>
-                </form>
-            </div>
-        </div>
-
     </div>
-    <div>
-        <ul id="charList"></ul>
-
-    </div>
-
-    <button id="rollInitiativeButton">Roll Initiative</button>
-    <div id="setInitiative" title="Set Initiative">
-        <div class="modal-content">
-            <form id="initiative_form">
-                {% csrf_token %}
-{#                <ul id="setInitList"></ul>#}
-                <fieldset id="setInitList"></fieldset>
-
-                <button id="startCombat">Start Combat</button>
-           </form>
-        </div>
-    </div>
-
 </div>
 
 
@@ -240,8 +279,8 @@
 
                 $('#setInitList').html('')
                 $.each(data.data, function (i, o) {
-                    $('#setInitList').append("<input type='number' class='init' id='"
-                        + o.type + '_' + o.id + "'>" + o.name)
+                    $('#setInitList').append("<div class='entry'><input type='number' class='init' id='"
+                        + o.type + '_' + o.id + "'> " + o.name + "</div>")
 
 
                 })

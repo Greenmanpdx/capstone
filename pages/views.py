@@ -155,7 +155,7 @@ def next_turn(request):
             character_list.append({
                 'name': c.name,
                 'id': c.pk,
-                'type': c.char_type,
+                'char_type': c.char_type,
                 'picture': c.picture.url
 
             })
@@ -180,7 +180,7 @@ def previous_turn(request):
             character_list.append({
                 'name': c.name,
                 'id': c.pk,
-                'type': c.char_type,
+                'char_type': c.char_type,
                 'picture': c.picture.url
 
             })
@@ -289,14 +289,14 @@ def set_initiatve_window(request):
             npcList.append({
                 'name': p.name,
                 'id': p.pk,
-                'type': p.char_type
+                'char_type': p.char_type
             })
         for n in session.encounter.monsters.all():
             npcList.append({
                 'name': n.npc.name,
                 'number': n.number,
                 'id': n.npc.pk,
-                'type': n.npc.char_type
+                'char_type': n.npc.char_type
             })
 
         return JsonResponse({'data': npcList})
@@ -376,7 +376,9 @@ def kill(request):
                 'name': d.name,
                 'id': d.pk,
                 'char_type': d.char_type,
-                'picture': c.picture.url
+                'picture': d.picture.url
             })
+
+        print(character_list)
 
         return JsonResponse({'data': character_list, 'delayed': delayed_list})

@@ -59,7 +59,7 @@
             success: function (data) {
 
                 $.each(data.data, function (index, ob) {
-                    redrawInitiative(index, ob)
+                    redrawInitiative(ob)
                 });
                 $('#currentTurn').html(data.data[index].name);
                 $('#currentImage').html("<img src='" + data.data[index].picture + "'>");
@@ -78,7 +78,7 @@
                     console.log(current);
                     $('#initiativeOrder').html('');
                     $.each(data.data, function (index, ob) {
-                        redrawInitiative(index, ob)
+                        redrawInitiative(ob)
                     });
                     $('#currentTurn').html(data.data[index].name)
                     $('#currentImage').html("<img src='" + data.data[index].picture + "'>")
@@ -98,7 +98,7 @@
                     console.log(current);
                     $('#initiativeOrder').html('');
                     $.each(data.data, function (index, ob) {
-                        redrawInitiative(index, ob)
+                        redrawInitiative(ob)
                     });
                     $('#currentTurn').html(data.data[index].name)
                     $('#currentImage').html("<img src='" + data.data[index].picture + "'>")
@@ -117,7 +117,7 @@
 
                     $('#initiativeOrder').html('');
                     $.each(data.data, function (index, ob) {
-                        redrawInitiative(index, ob)
+                        redrawInitiative(ob)
                     });
                     $('#currentTurn').html(data.data[index].name);
                     $('#currentImage').html("<img src='" + data.data[index].picture + "'>")
@@ -153,7 +153,7 @@
                     console.log(data)
                     $('#initiativeOrder').html('');
                     $.each(data.data, function (index, ob) {
-                        redrawInitiative(index, ob)
+                        redrawInitiative(ob)
                     });
                     $('#currentTurn').html(data.data[index].name);
                     $('#currentImage').html("<img src='" + data.data[index].picture + "'>");
@@ -184,12 +184,12 @@
 
                 },
                 success: function (data) {
-                    console.log(data);
+                    console.log(data.data);
                     $('#initiativeOrder').html('');
-                    var i = 0;
+
                     $.each(data.data, function (index, ob) {
-                        ++i
-                        redrawInitiative(i, ob)
+
+                        redrawInitiative(ob)
                     });
 
 
@@ -210,8 +210,8 @@
 
         }
 
-        function redrawInitiative(i, ob) {
-            console.log(i)
+        function redrawInitiative(ob) {
+
             console.log(ob)
             var li = document.createElement('li');
             li.className = 'charListItem';

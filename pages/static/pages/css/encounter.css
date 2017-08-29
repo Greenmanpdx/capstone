@@ -23,3 +23,69 @@
 .toAdd{
     width: 25px;
 }
+
+#crLow{
+    width: 35px;
+
+
+}
+
+#crHigh{
+    width: 35px;
+
+
+
+}
+
+#searchBars{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 50%;
+    padding-left: 2em;
+    margin: auto;
+
+
+
+
+}
+
+.bar{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#CR{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+
+}
+#CR span{
+    vertical-align: middle;
+}
+
+h1{
+    text-align: center;
+}
+
+#searchResults{
+    background-color: #262626;
+    border: solid #4252a2;
+}
+
+#head{
+        border: solid blue;
+    border-radius: 20%;
+        padding-bottom: 1em;
+    background-color: #004e70;
+
+
+}
+
+body{
+    background-color: green;
+    color: white;
+}

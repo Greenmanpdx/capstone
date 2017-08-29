@@ -7,23 +7,35 @@
     <link rel="stylesheet" href="{% static 'pages/js/jquery-ui.min.css' %}">
     <link rel="stylesheet" href="{% static 'pages/css/encounter.css' %}">
 </head>
+
 <body>
-<h1>Encounter Builder</h1>
+<div id="head">
+    <h1>Encounter Builder</h1>
 
-<label for="nameSearch">Name</label>
-<input class='search' type="search" name="name" id="nameSearch">
+    <div id="searchBars">
+        <div class="bar">
+            <label for="nameSearch">Name</label>
+            <input class='search' type="search" name="name" id="nameSearch">
+        </div>
+        <div class="bar">
+            <label for="crLow">Challenge rating</label>
+            <div id="CR">
+                <input class='search' type="search" name="crLow" id="crLow" value="0">
+                <span>to</span>
+                <input class='search' type="search" name="crHigh" id="crHigh" value="20">
+            </div>
+        </div>
+        <div class="bar">
+            <label for="environment">Environment</label>
+            <input class='search' type="search" name="environment" id="environment">
+        </div>
+        <div class="bar">
+            <label for="type">Type</label>
+            <input class='search' type="search" name="type" id="type">
+        </div>
+    </div>
 
-<label for="crLow">Challenge rating</label>
-<input class='search' type="search" name="crLow" id="crLow" value="0">
-<input class='search' type="search" name="crHigh" id="crHigh" value="20">
-
-<label for="environment">Environment</label>
-<input class='search' type="search" name="environment" id="environment">
-
-<label for="type">Type</label>
-<input class='search' type="search" name="type" id="type">
-
-
+</div>
 <div id="searchResults">
     <ul id="npcList"></ul>
 </div>
