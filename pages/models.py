@@ -41,7 +41,7 @@ class Character(models.Model):
 
 
 class PC(Character):
-    player_name = models.CharField(max_length=256, null=True, blank=True)
+    player_name = models.CharField(max_length=512, null=True, blank=True)
 
 
 class NPC(Character):
